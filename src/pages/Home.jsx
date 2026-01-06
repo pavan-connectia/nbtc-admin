@@ -60,7 +60,7 @@ const Home = () => {
     if (isSuccess && data?.data) {
       const homeData = data.data;
       setId(homeData._id || "");
-      
+
       // Merge API data with initial state to ensure all keys exist
       setFormData({
         ...initialFormState,
@@ -104,16 +104,16 @@ const Home = () => {
         // For structure like: statistics[index].text.en
         updatedArray[index] = {
           ...updatedArray[index],
-          [subKey]: { 
-            ...(updatedArray[index][subKey] || {}), 
-            [key]: value 
+          [subKey]: {
+            ...(updatedArray[index][subKey] || {}),
+            [key]: value
           },
         };
       } else {
         // For structure like: companyPhones[index].title
-        updatedArray[index] = { 
-          ...updatedArray[index], 
-          [key]: value 
+        updatedArray[index] = {
+          ...updatedArray[index],
+          [key]: value
         };
       }
       return { ...prev, [arrayField]: updatedArray };
@@ -225,12 +225,12 @@ const Home = () => {
                 <Input type="file" accept="video/*" onChange={handleVideoUpload} />
               </div>
             )}
-            
-               <TextEditor label="Heading (EN)" value={formData.heading.en} onChange={handleNestedChange("heading", "en")} />
-               <TextEditor label="Heading (AR)" value={formData.heading.ar} onChange={handleNestedChange("heading", "ar")} />
-               <TextEditor label="Description (EN)" value={formData.description.en} onChange={handleNestedChange("description", "en")} />
-               <TextEditor label="Description (AR)" value={formData.description.ar} onChange={handleNestedChange("description", "ar")} />
-            
+
+            <TextEditor label="Heading (EN)" value={formData.heading.en} onChange={handleNestedChange("heading", "en")} />
+            <TextEditor label="Heading (AR)" value={formData.heading.ar} onChange={handleNestedChange("heading", "ar")} />
+            <TextEditor label="Description (EN)" value={formData.description.en} onChange={handleNestedChange("description", "en")} />
+            <TextEditor label="Description (AR)" value={formData.description.ar} onChange={handleNestedChange("description", "ar")} />
+
             <Input id="learnMore" label="Learn More URL" value={formData.learnMore} onChange={handleChange} />
           </div>
         )}
@@ -272,33 +272,33 @@ const Home = () => {
       {/* About Section */}
       <div className="space-y-6 pt-6 border-t">
         <Heading>About NBTC (Introduction)</Heading>
-   
-          <TextArea label="Journey (EN)" value={formData.journey.en} onChange={handleNestedChange("journey", "en")} />
-          <TextArea label="Journey (AR)" value={formData.journey.ar} onChange={handleNestedChange("journey", "ar")} />
-          <TextArea label="Mission (EN)" value={formData.mission.en} onChange={handleNestedChange("mission", "en")} />
-          <TextArea label="Mission (AR)" value={formData.mission.ar} onChange={handleNestedChange("mission", "ar")} />
-          <TextArea label="Vision (EN)" value={formData.vision.en} onChange={handleNestedChange("vision", "en")} />
-          <TextArea label="Vision (AR)" value={formData.vision.ar} onChange={handleNestedChange("vision", "ar")} />
-       
-          <TextEditor label="Values (EN)" value={formData.value.en} onChange={handleNestedChange("value", "en")} />
-          <TextEditor label="Values (AR)" value={formData.value.ar} onChange={handleNestedChange("value", "ar")} />
- 
+
+        <TextArea label="Journey (EN)" value={formData.journey.en} onChange={handleNestedChange("journey", "en")} />
+        <TextArea label="Journey (AR)" value={formData.journey.ar} onChange={handleNestedChange("journey", "ar")} />
+        <TextArea label="Mission (EN)" value={formData.mission.en} onChange={handleNestedChange("mission", "en")} />
+        <TextArea label="Mission (AR)" value={formData.mission.ar} onChange={handleNestedChange("mission", "ar")} />
+        <TextArea label="Vision (EN)" value={formData.vision.en} onChange={handleNestedChange("vision", "en")} />
+        <TextArea label="Vision (AR)" value={formData.vision.ar} onChange={handleNestedChange("vision", "ar")} />
+
+        <TextEditor label="Values (EN)" value={formData.value.en} onChange={handleNestedChange("value", "en")} />
+        <TextEditor label="Values (AR)" value={formData.value.ar} onChange={handleNestedChange("value", "ar")} />
+
       </div>
 
       {/* Social Links */}
-      
-        <Heading className="col-span-full">Social Links</Heading>
-        <Input id="facebookLink" label="Facebook" value={formData.facebookLink} onChange={handleChange} />
-        <Input id="youtubeLink" label="YouTube" value={formData.youtubeLink} onChange={handleChange} />
-        <Input id="twitterLink" label="Twitter" value={formData.twitterLink} onChange={handleChange} />
-        <Input id="instagramLink" label="Instagram" value={formData.instagramLink} onChange={handleChange} />
-        <Input id="linkedInLink" label="LinkedIn" value={formData.linkedInLink} onChange={handleChange} />
-      
+
+      <Heading className="col-span-full">Social Links</Heading>
+      <Input id="facebookLink" label="Facebook" value={formData.facebookLink} onChange={handleChange} />
+      <Input id="youtubeLink" label="YouTube" value={formData.youtubeLink} onChange={handleChange} />
+      <Input id="twitterLink" label="Twitter" value={formData.twitterLink} onChange={handleChange} />
+      <Input id="instagramLink" label="Instagram" value={formData.instagramLink} onChange={handleChange} />
+      <Input id="linkedInLink" label="LinkedIn" value={formData.linkedInLink} onChange={handleChange} />
+
 
       {/* Contact Info */}
       <div className="space-y-6 border-t pt-6">
         <Heading>Company Contacts</Heading>
-        
+
         <Label>Addresses</Label>
         {formData.companyAddress?.map((address, index) => (
           <div key={index} className="flex gap-2 items-end bg-gray-50 p-2 rounded">
@@ -310,30 +310,30 @@ const Home = () => {
         ))}
         <Button type="button" variant="outline" onClick={() => addField("companyAddress", { title: { en: "", ar: "" }, href: "" })}>Add Address</Button>
 
-     
-            <div>
-                <Label>Phone Numbers</Label>
-                {formData.companyPhones?.map((phone, index) => (
-                    <div key={index} className="flex gap-2 mt-2">
-                        <Input placeholder="Label" value={phone.title} onChange={handleArrayChange(index, "companyPhones", "title")} />
-                        <Input placeholder="tel:..." value={phone.href} onChange={handleArrayChange(index, "companyPhones", "href")} />
-                        <Button variant="danger" onClick={() => removeField(index, "companyPhones")}><LuTrash /></Button>
-                    </div>
-                ))}
-                <Button type="button" className="mt-2" onClick={() => addField("companyPhones", { title: "", href: "" })}>Add Phone</Button>
+
+        <div>
+          <Label>Phone Numbers</Label>
+          {formData.companyPhones?.map((phone, index) => (
+            <div key={index} className="flex gap-2 mt-2">
+              <Input placeholder="Label" value={phone.title} onChange={handleArrayChange(index, "companyPhones", "title")} />
+              <Input placeholder="tel:..." value={phone.href} onChange={handleArrayChange(index, "companyPhones", "href")} />
+              <Button variant="danger" onClick={() => removeField(index, "companyPhones")}><LuTrash /></Button>
             </div>
-            <div>
-                <Label>Emails</Label>
-                {formData.companyEmail?.map((email, index) => (
-                    <div key={index} className="flex gap-2 mt-2">
-                        <Input placeholder="Email" value={email.title} onChange={handleArrayChange(index, "companyEmail", "title")} />
-                        <Input placeholder="mailto:..." value={email.href} onChange={handleArrayChange(index, "companyEmail", "href")} />
-                        <Button variant="danger" onClick={() => removeField(index, "companyEmail")}><LuTrash /></Button>
-                    </div>
-                ))}
-                <Button type="button" className="mt-2" onClick={() => addField("companyEmail", { title: "", href: "" })}>Add Email</Button>
+          ))}
+          <Button type="button" className="mt-2" onClick={() => addField("companyPhones", { title: "", href: "" })}>Add Phone</Button>
+        </div>
+        <div>
+          <Label>Emails</Label>
+          {formData.companyEmail?.map((email, index) => (
+            <div key={index} className="flex gap-2 mt-2">
+              <Input placeholder="Email" value={email.title} onChange={handleArrayChange(index, "companyEmail", "title")} />
+              <Input placeholder="mailto:..." value={email.href} onChange={handleArrayChange(index, "companyEmail", "href")} />
+              <Button variant="danger" onClick={() => removeField(index, "companyEmail")}><LuTrash /></Button>
             </div>
-       
+          ))}
+          <Button type="button" className="mt-2" onClick={() => addField("companyEmail", { title: "", href: "" })}>Add Email</Button>
+        </div>
+
       </div>
 
       <SEOForm
