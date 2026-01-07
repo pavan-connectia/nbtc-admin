@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Input, ImageUpload, ButtonGroup, TextEditor, Modal } from "..";
+import {
+  Input,
+  ImageUpload,
+  ButtonGroup,
+  TextEditor,
+  Modal,
+} from "..";
 import { toast } from "sonner";
 import {
   usePostRegionMutation,
@@ -8,16 +14,10 @@ import {
 
 const RegionForm = ({ onClose, region, isOpen }) => {
   const initialState = {
-    name: {
-      en: "",
-      ar: "",
-    },
-    image: "",
+    name: { en: "", ar: "" },
     href: "",
-    description: {
-      en: "",
-      ar: "",
-    },
+    slider: [{ image: "", heading: { en: "", ar: "" } }],
+    description: { en: "", ar: "" },
     seo: {
       title: "",
       metaDescription: "",
@@ -33,33 +33,86 @@ const RegionForm = ({ onClose, region, isOpen }) => {
   const [updateRegion] = useUpdateRegionMutation();
 
   useEffect(() => {
-    setFormData(region ? region : initialState);
-  }, [region]);
+    if (region) {
+      setFormData({
+        ...initialState,
+        ...region,
+        name: region.name || initialState.name,
+        description: region.description || initialState.description,
+        slider: Array.isArray(region.slider) && region.slider.length > 0
+          ? region.slider
+          : initialState.slider,
+        seo: region.seo || initialState.seo,
+      });
+    } else {
+      setFormData(initialState);
+    }
+  }, [region, isOpen]);
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    const newValue = id === "display" ? value === "true" : value;
-    setFormData((prev) => ({ ...prev, [id]: newValue }));
-  };
-
-  const handleNestedChange = (id, lang, value) => {
+  const handleNestedChange = (field, lang, value) => {
     setFormData((prev) => ({
       ...prev,
-      [id]: {
-        ...prev[id],
+      [field]: {
+        ...prev[field],
         [lang]: value,
       },
     }));
   };
 
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+
+  const handleSliderChange = (index, field, lang, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      slider: prev.slider.map((slide, i) => {
+        if (i !== index) return slide;
+
+        if (lang) {
+          return {
+            ...slide,
+            [field]: {
+              ...slide[field],
+              [lang]: value,
+            },
+          };
+        }
+
+        return {
+          ...slide,
+          [field]: value,
+        };
+      }),
+    }));
+  };
+
+  const addSlide = () => {
+    setFormData((prev) => ({
+      ...prev,
+      slider: [...prev.slider, { image: "", heading: { en: "", ar: "" } }],
+    }));
+  };
+
+  const removeSlide = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      slider: prev.slider.filter((_, i) => i !== index),
+    }));
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      region
-        ? await updateRegion({ id: region._id, ...formData }).unwrap()
-        : await postRegion(formData).unwrap();
-
-      toast.success(`Region ${region ? "updated" : "saved"} successfully`);
+      if (region) {
+        await updateRegion({ id: region._id, ...formData }).unwrap();
+      } else {
+        await postRegion(formData).unwrap();
+      }
+      toast.success(`Region ${region ? "updated" : "created"} successfully`);
       onClose();
     } catch (error) {
       toast.error(error?.data?.message || "Something went wrong");
@@ -73,63 +126,97 @@ const RegionForm = ({ onClose, region, isOpen }) => {
       modalTitle={`${region ? "Edit" : "New"} Region`}
       modalDescription="Make changes to the region here. Click save when you're done."
     >
-      <modal className="mt-5 space-y-4" onSubmit={handleSubmit}>
-        <Input
-          id="name"
-          label="Name (EN)"
-          value={formData.name?.en || ""}
-          onChange={(e) => handleNestedChange("name", "en", e.target.value)}
-        />
-
-        <Input
-          id="name"
-          label="Name (AR)"
-          value={formData.name?.ar || ""}
-          onChange={(e) => handleNestedChange("name", "ar", e.target.value)}
-        />
+      <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="Name (EN)"
+            value={formData.name.en}
+            onChange={(e) => handleNestedChange("name", "en", e.target.value)}
+          />
+          <Input
+            label="Name (AR)"
+            value={formData.name.ar}
+            onChange={(e) => handleNestedChange("name", "ar", e.target.value)}
+          />
+        </div>
 
         <Input
           id="href"
-          label="Href"
-          value={formData.href || ""}
-          onChange={(e) => handleChange(e)}
+          label="Slug / Href"
+          value={formData.href}
+          onChange={handleChange}
         />
 
-        <ImageUpload
-          uploadUrl={"/uploads/regions"}
-          title={formData.name.en}
-          imageUrl={formData.image}
-          onUploadSuccess={(filePath) =>
-            setFormData({ ...formData, image: filePath })
-          }
-        />
+        <div className="space-y-4">
+          <div className="flex items-center justify-between border-b pb-2">
+            <h3 className="text-sm font-bold uppercase tracking-wider">Slider Images</h3>
+            <button
+              type="button"
+              onClick={addSlide}
+              className="text-xs font-semibold text-blue-600 hover:underline"
+            >
+              + Add Slide
+            </button>
+          </div>
 
-        <TextEditor
-          id="description-en"
-          label="Description (EN)"
-          value={formData.description.en || ""}
-          onChange={(value) =>
-            setFormData((prev) => ({
-              ...prev,
-              description: { ...prev.description, en: value },
-            }))
-          }
-        />
+          {formData.slider.map((slide, index) => (
+            <div key={index} className="relative space-y-3 rounded-lg border bg-gray-50/50 p-4">
+              {formData.slider.length > 1 && (
+                <button
+                  type="button"
+                  className="absolute right-3 top-3 text-xs text-red-500 hover:text-red-700"
+                  onClick={() => removeSlide(index)}
+                >
+                  Remove
+                </button>
+              )}
 
-        <TextEditor
-          id="description-ar"
-          label="Description (AR)"
-          value={formData.description.ar || ""}
-          onChange={(value) =>
-            setFormData((prev) => ({
-              ...prev,
-              description: { ...prev.description, ar: value },
-            }))
-          }
-        />
+              <ImageUpload
+                uploadUrl="/uploads/regions"
+                title={`Slide Image ${index + 1}`}
+                imageUrl={slide.image}
+                onUploadSuccess={(filePath) =>
+                  handleSliderChange(index, "image", null, filePath)
+                }
+              />
 
-        <ButtonGroup negativeClick={onClose} positiveClick={handleSubmit} />
-      </modal>
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="Heading (EN)"
+                  value={slide.heading.en}
+                  onChange={(e) => handleSliderChange(index, "heading", "en", e.target.value)}
+                />
+                <Input
+                  label="Heading (AR)"
+                  value={slide.heading.ar}
+                  onChange={(e) => handleSliderChange(index, "heading", "ar", e.target.value)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-4 pt-4">
+          <TextEditor
+            label="Description (EN)"
+            value={formData.description.en}
+            onChange={(val) => handleNestedChange("description", "en", val)}
+          />
+          <TextEditor
+            label="Description (AR)"
+            value={formData.description.ar}
+            onChange={(val) => handleNestedChange("description", "ar", val)}
+          />
+        </div>
+
+        <div className="pt-6">
+          <ButtonGroup
+            positiveLabel={region ? "Update Region" : "Create Region"}
+            positiveType="submit"
+            negativeClick={onClose}
+          />
+        </div>
+      </form>
     </Modal>
   );
 };
