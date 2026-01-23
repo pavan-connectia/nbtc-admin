@@ -13,6 +13,7 @@ const DetailAffliate = lazy(
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
+const EmployeeLoginURL = lazy(() => import("./pages/employeeLoginURL"))
 
 const Awards = lazy(() => import("./pages/awards/Awards"));
 const AddAward = lazy(() => import("./pages/awards/AddAwards"));
@@ -158,6 +159,7 @@ const App = () => {
             <Route path="/news/video-gallery" element={<VideoGallery />} />
 
             <Route path="/banners" element={<BannerImage />} />
+            <Route path="/employeeLoginURL" element={<EmployeeLoginURL />} />
 
             <Route path="/equipments" element={<SubCategory />} />
             <Route path="/equipments/add" element={<AddSubCategory />} />

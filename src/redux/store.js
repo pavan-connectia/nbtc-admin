@@ -44,6 +44,7 @@ import { supportServiceApi } from "./api/supportService";
 import { uploadApi } from "./api/upload";
 import { videoGalleryApi } from "./api/videGallery";
 import { bannerApi } from "./api/banner";
+import { departmentLoginApi } from "./api/url";
 
 
 import authReducer from "./reducer/authReducer";
@@ -99,6 +100,7 @@ const rootReducer = combineReducers({
   [uploadApi.reducerPath]: uploadApi.reducer,
   [videoGalleryApi.reducerPath]: videoGalleryApi.reducer,
   [bannerApi.reducerPath]: bannerApi.reducer,
+  [departmentLoginApi.reducerPath]: departmentLoginApi.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -152,6 +154,7 @@ export const store = configureStore({
       .concat(uploadApi.middleware)
       .concat(videoGalleryApi.middleware)
       .concat(bannerApi.middleware)
+      .concat(departmentLoginApi.middleware)
 });
 
 export const persistor = persistStore(store);

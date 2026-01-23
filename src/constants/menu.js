@@ -24,6 +24,7 @@ import {
   LuBuilding2,
   LuUserCheck,
   LuImage,
+  LuLogIn,
 } from "react-icons/lu";
 
 export const menus = [
@@ -61,6 +62,12 @@ export const menus = [
     name: "Banner",
     path: "/banners",
     icon: LuImage,
+    roles: ["superadmin"],
+  },
+  {
+    name: "Login URL",
+    path: "/employeeLoginURL",
+    icon: LuLogIn,
     roles: ["superadmin"],
   },
   {
