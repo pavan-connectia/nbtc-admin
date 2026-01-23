@@ -57,6 +57,12 @@ export const menus = [
     icon: LuInfo,
     roles: ["admin", "user"],
   },
+    {
+    name: "Banner",
+    path: "/banners",
+    icon: LuImage,
+    roles: ["superadmin"],
+  },
   {
     name: "Affiliates",
     path: "/affiliates",

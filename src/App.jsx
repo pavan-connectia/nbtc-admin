@@ -64,6 +64,8 @@ const AddSubCategory = lazy(
   () => import("./pages/sub-category/AddSubCategory"),
 );
 
+const BannerImage = lazy(() => import("./pages/banner"))
+
 const Region = lazy(() => import("./pages/region/Region"));
 
 const Aboutus = lazy(() => import("./pages/Aboutus"));
@@ -154,6 +156,8 @@ const App = () => {
             <Route path="/news/latest-news/:id" element={<DetailNews />} />
             <Route path="/news/publication" element={<Publication />} />
             <Route path="/news/video-gallery" element={<VideoGallery />} />
+
+            <Route path="/banners" element={<BannerImage />} />
 
             <Route path="/equipments" element={<SubCategory />} />
             <Route path="/equipments/add" element={<AddSubCategory />} />

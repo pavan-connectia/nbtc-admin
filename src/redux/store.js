@@ -43,6 +43,8 @@ import { subcategoryApi } from "./api/subcategory";
 import { supportServiceApi } from "./api/supportService";
 import { uploadApi } from "./api/upload";
 import { videoGalleryApi } from "./api/videGallery";
+import { bannerApi } from "./api/banner";
+
 
 import authReducer from "./reducer/authReducer";
 import themeReducer from "./reducer/themeReducer";
@@ -96,6 +98,7 @@ const rootReducer = combineReducers({
   [supportServiceApi.reducerPath]: supportServiceApi.reducer,
   [uploadApi.reducerPath]: uploadApi.reducer,
   [videoGalleryApi.reducerPath]: videoGalleryApi.reducer,
+  [bannerApi.reducerPath]: bannerApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -147,7 +150,8 @@ export const store = configureStore({
       .concat(subcategoryApi.middleware)
       .concat(supportServiceApi.middleware)
       .concat(uploadApi.middleware)
-      .concat(videoGalleryApi.middleware),
+      .concat(videoGalleryApi.middleware)
+      .concat(bannerApi.middleware)
 });
 
 export const persistor = persistStore(store);

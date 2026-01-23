@@ -21,6 +21,7 @@ const SupportService = () => {
   const [id, setId] = useState("");
   const [updateService] = useUpdateSupportServiceMutation();
 
+  const [serviceImage, setServiceImage] = useState("");
   const [adminHr, setAdminHr] = useState({
     subHeading: { en: "", ar: "" },
     features: [
@@ -40,6 +41,7 @@ const SupportService = () => {
       const serviceData = data?.data || {};
       if (serviceData?._id) setId(serviceData._id);
 
+      setServiceImage(serviceData.image || "");
       setAdminHr((prevData) => ({
         ...prevData,
         subHeading: serviceData.adminHr?.subHeading || { en: "", ar: "" },
@@ -116,6 +118,7 @@ const SupportService = () => {
     try {
       await updateService({
         id,
+        image: serviceImage,
         adminHr,
         financeAccounts,
         materialManagement,
@@ -136,11 +139,20 @@ const SupportService = () => {
         onSubmit={handleSubmit}
         className="space-y-3 rounded-lg p-5"
       >
-        <Heading>Support Service</Heading>
+        <Heading>Support Function</Heading>
         <Text>
           Make changes to the support service page here. Click save when you're
           done.
         </Text>
+
+        <ImageUpload
+          label="Support Function Header Image"
+          uploadUrl="/uploads/services"
+          value={serviceImage}
+          imageUrl={serviceImage}
+          className="h-[12rem]"
+          onUploadSuccess={(filePath) => setServiceImage(filePath)}
+        />
 
         <Heading>Admin HR</Heading>
 
