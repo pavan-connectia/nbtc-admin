@@ -8,6 +8,7 @@ const RolesForm = ({ isOpen, onClose, user }) => {
   const { department, role } = useSelector((state) => state.auth);
   const [postUser] = useCreateUserMutation();
   const [updateUser] = useUpdateUserMutation();
+  
   const initialState = {
     name: "",
     email: "",
@@ -21,12 +22,15 @@ const RolesForm = ({ isOpen, onClose, user }) => {
       delete: false,
     },
   };
+
   const [formData, setFormData] = useState(initialState);
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const id = e?.target ? e.target.id : null;
+    const value = e?.target ? e.target.value : e;
 
-    // Automatically set all permissions if role is "admin"
+    if (!id) return;
+
     if (id === "role" && value === "admin") {
       setFormData((prev) => ({
         ...prev,
@@ -57,31 +61,38 @@ const RolesForm = ({ isOpen, onClose, user }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let updatedFormData = { ...formData };
+      let payload = { ...formData };
 
-      if (!formData.password) {
-        const { password, ...rest } = updatedFormData;
-        updatedFormData = rest;
+      if (user && !payload.password) {
+        delete payload.password;
+      }
+
+      if (!payload.department || payload.department === "") {
+        delete payload.department;
       }
 
       user
-        ? await updateUser({ id: user._id, ...updatedFormData }).unwrap()
-        : await postUser(updatedFormData).unwrap();
+        ? await updateUser({ id: user._id, ...payload }).unwrap()
+        : await postUser(payload).unwrap();
 
-      toast(`User ${user ? "updated" : "created"} successfully`);
+      toast.success(`User ${user ? "updated" : "created"} successfully`);
       setFormData(initialState);
       onClose();
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error(error?.data?.message || "Something went wrong");
     }
   };
 
   useEffect(() => {
-    setFormData((prevFormData) => ({
-      ...(user ? user : initialState),
-      password: "",
-    }));
-  }, [user]);
+    if (user) {
+      setFormData({
+        ...user,
+        password: "", 
+      });
+    } else {
+      setFormData(initialState);
+    }
+  }, [user, isOpen]);
 
   return (
     <Modal
@@ -147,7 +158,11 @@ const RolesForm = ({ isOpen, onClose, user }) => {
         )}
 
         {role === "superadmin" && formData?.role !== "superadmin" && (
-          <DepartmentDD value={formData.department} onChange={handleChange} />
+          <DepartmentDD 
+            id="department" 
+            value={formData.department} 
+            onChange={(val) => handleChange({ target: { id: "department", value: val?.target ? val.target.value : val } })} 
+          />
         )}
 
         <ButtonGroup negativeClick={onClose} />
