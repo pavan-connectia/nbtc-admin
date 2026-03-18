@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Input, ImageUpload, TextArea, ButtonGroup, Display } from "..";
+import { Modal, Input, ImageUpload, TextArea, ButtonGroup, Display, TextEditor } from "..";
 import {
   usePostMilestonesMutation,
   useUpdateMilestonesMutation,
@@ -23,9 +23,8 @@ const MilestonesForm = ({ isOpen, onClose, milestones }) => {
     setFormData(milestones ? milestones : initialState);
   }, [milestones]);
 
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-
+  // 1. Unified function to handle state updates
+  const updateValue = (id, value) => {
     if (id.includes("title") || id.includes("description")) {
       const [key, lang] = id.split("-");
       setFormData((prev) => ({
@@ -40,22 +39,21 @@ const MilestonesForm = ({ isOpen, onClose, milestones }) => {
     }
   };
 
+  // 2. Standard handler for Inputs (Event-based)
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    updateValue(id, value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       milestones
-        ? await updateMilestones({
-            id: milestones._id,
-            ...formData,
-          }).unwrap()
+        ? await updateMilestones({ id: milestones._id, ...formData }).unwrap()
         : await postMilestones(formData).unwrap();
 
-      toast.success(
-        `Milestone ${milestones ? "updated" : "created"} successfully`,
-      );
+      toast.success(`Milestone ${milestones ? "updated" : "created"} successfully`);
       setFormData(initialState);
-
       onClose();
     } catch (error) {
       toast.error("Something went wrong");
@@ -102,20 +100,21 @@ const MilestonesForm = ({ isOpen, onClose, milestones }) => {
           }
         />
 
-        <TextArea
+        {/* 3. Updated TextEditor to pass value directly */}
+        <TextEditor
           label="Description (EN)"
           id="description-en"
           name="description"
           value={formData.description.en}
-          onChange={handleChange}
+          onChange={(content) => updateValue("description-en", content)}
         />
 
-        <TextArea
+        <TextEditor
           label="Description (AR)"
           id="description-ar"
           name="description"
           value={formData.description.ar}
-          onChange={handleChange}
+          onChange={(content) => updateValue("description-ar", content)}
         />
 
         <Display

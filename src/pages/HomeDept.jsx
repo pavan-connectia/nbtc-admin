@@ -19,12 +19,14 @@ import {
 import { LuTrash } from "react-icons/lu";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
+import { usePostUploadMutation } from "@/redux/api/upload";
 
 const HomeDept = () => {
   const { department } = useSelector((state) => state.auth);
   const { data, isSuccess } = useGetHomeDeptByIdQuery(department);
   const [id, setId] = useState("");
   const [updateHome] = useUpdateHomeDeptMutation();
+  const [upload] = usePostUploadMutation();
 
   const initialFormState = {
     heroType: "",
@@ -116,6 +118,30 @@ const HomeDept = () => {
       const updatedArray = prevData[field].filter((_, i) => i !== index);
       return { ...prevData, [field]: updatedArray };
     });
+  };
+
+  const handleVideoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+  
+    const uploadData = new FormData();
+    uploadData.append("image", file); 
+  
+    try {
+
+      const response = await upload({
+        image: uploadData,          
+        folder: "/uploads/videos", 
+        title: "hero-video"  
+      }).unwrap();
+  
+      const path = response.filePath || response.data?.filePath;
+      setFormData((prev) => ({ ...prev, video: path }));
+      toast.success("Video uploaded");
+    } catch (error) {
+      console.error(error);
+      toast.error("Video upload failed");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -280,33 +306,13 @@ const HomeDept = () => {
             />
           ) : (
             <>
-              {formData?.video && (
-                <video
-                  src={`${import.meta.env.VITE_API_BASE_URL}/${formData?.video}`}
-                  controls
-                  className="object-contain w-32 h-32 mb-2 border rounded"
-                />
-              )}
-
-              <Input
-                type="file"
-                accept="video/*"
-                onChange={async (e) => {
-                  const file = e.target.files?.[0];
-                  if (!file) return;
-
-                  try {
-                    const response = await upload({
-                      image: formData,
-                      folder: "/uploads/videos",
-                      title: title,
-                    }).unwrap();
-                    setFormData({ ...formData, video: response.filePath });
-                  } catch (error) {
-                    console.error("Video upload failed", error);
-                  }
-                }}
-              />
+                            <div className="space-y-2 border p-3 rounded bg-white">
+                              <Label>Hero Video</Label>
+                              {formData.video && (
+                                <video src={`${import.meta.env.VITE_API_BASE_URL}${formData.video}`} controls className="w-full max-h-40 rounded mb-2" />
+                              )}
+                              <Input type="file" accept="video/*" onChange={handleVideoUpload} />
+                            </div>
             </>
           )}
 

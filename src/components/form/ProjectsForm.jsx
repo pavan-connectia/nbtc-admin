@@ -18,6 +18,7 @@ import {
 } from "@/redux/api/projects";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
+import SubIndex from "../shared/subIndex";
 
 const ProjectsForm = ({ isOpen, onClose, projects }) => {
   const { department } = useSelector((state) => state.auth);
@@ -31,6 +32,7 @@ const ProjectsForm = ({ isOpen, onClose, projects }) => {
     department: department || "",
     display: true,
     index: 0,
+    subIndex: 0,
     seo: {
       title: "",
       metaDescription: "",
@@ -185,6 +187,10 @@ const ProjectsForm = ({ isOpen, onClose, projects }) => {
         />
 
         <Index value={formData.index} onChange={handleChange} />
+
+        {department && (
+          <SubIndex value={formData.subIndex} onChange={handleChange} />
+        )}
 
         <SEOForm
           seo={formData.seo}

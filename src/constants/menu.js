@@ -164,24 +164,24 @@ export const menus = [
     icon: LuMail,
     roles: ["superadmin"],
   },
-  {
-    name: "MailingList",
-    path: "/mailinglist-department",
-    icon: LuMail,
-    roles: ["admin", "user"],
-  },
+  // {
+  //   name: "MailingList",
+  //   path: "/mailinglist-department",
+  //   icon: LuMail,
+  //   roles: ["admin", "user"],
+  // },
   {
     name: "Milestones",
     path: "/milestones",
     icon: LuMilestone,
     roles: ["superadmin"],
   },
-  {
-    name: "Milestones",
-    path: "/milestones-department",
-    icon: LuMilestone,
-    roles: ["admin", "user"],
-  },
+  // {
+  //   name: "Milestones",
+  //   path: "/milestones-department",
+  //   icon: LuMilestone,
+  //   roles: ["admin", "user"],
+  // },
   {
     name: "News",
     icon: LuNewspaper,

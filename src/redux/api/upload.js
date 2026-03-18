@@ -15,15 +15,23 @@ export const uploadApi = createApi({
   }),
   tagTypes: ["Upload"],
   endpoints: (builder) => ({
-    postUpload: builder.mutation({
-      query: ({ image, folder, title }) => ({
-        url: `/upload`,
-        method: "POST",
-        params: { folder, title },
-        body: image,
-      }),
-      invalidatesTags: ["Upload"],
-    }),
+    // redux/api/upload.js
+
+postUpload: builder.mutation({
+  // Destructure the object sent by the component
+  query: ({ image, folder, title }) => ({
+    url: `/upload`,
+    method: "POST",
+    // These are now strings extracted from the object
+    params: {
+      folder: folder,
+      title: title
+    },
+    // This is the actual FormData object contained in the 'image' key
+    body: image, 
+  }),
+  invalidatesTags: ["Upload"],
+}),
 
     postUploadFile: builder.mutation({
       query: ({ image, folder }) => ({

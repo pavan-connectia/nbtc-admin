@@ -137,15 +137,23 @@ const Home = () => {
   const handleVideoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+  
     const uploadData = new FormData();
-    uploadData.append("file", file);
-    uploadData.append("folder", "videos");
-
+    uploadData.append("image", file); 
+  
     try {
-      const response = await upload(uploadData).unwrap();
-      setFormData((prev) => ({ ...prev, video: response.filePath }));
+
+      const response = await upload({
+        image: uploadData,          
+        folder: "/uploads/videos", 
+        title: "hero-video"  
+      }).unwrap();
+  
+      const path = response.filePath || response.data?.filePath;
+      setFormData((prev) => ({ ...prev, video: path }));
       toast.success("Video uploaded");
     } catch (error) {
+      console.error(error);
       toast.error("Video upload failed");
     }
   };

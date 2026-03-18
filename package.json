@@ -11,6 +11,8 @@
     "format": "npx prettier --write ."
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
     "@reduxjs/toolkit": "^2.2.7",
     "browser-image-compression": "^2.0.2",
     "clsx": "^2.1.1",

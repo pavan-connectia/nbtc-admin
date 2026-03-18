@@ -8,7 +8,7 @@ const RolesForm = ({ isOpen, onClose, user }) => {
   const { department, role } = useSelector((state) => state.auth);
   const [postUser] = useCreateUserMutation();
   const [updateUser] = useUpdateUserMutation();
-  
+
   const initialState = {
     name: "",
     email: "",
@@ -86,8 +86,17 @@ const RolesForm = ({ isOpen, onClose, user }) => {
   useEffect(() => {
     if (user) {
       setFormData({
-        ...user,
-        password: "", 
+        name: user.name || "",
+        email: user.email || "",
+        password: "",
+        role: user.role || "",
+        department: user.department?._id || "",
+        permissions: user.permissions || {
+          create: false,
+          read: false,
+          update: false,
+          delete: false,
+        },
       });
     } else {
       setFormData(initialState);
@@ -158,10 +167,10 @@ const RolesForm = ({ isOpen, onClose, user }) => {
         )}
 
         {role === "superadmin" && formData?.role !== "superadmin" && (
-          <DepartmentDD 
-            id="department" 
-            value={formData.department} 
-            onChange={(val) => handleChange({ target: { id: "department", value: val?.target ? val.target.value : val } })} 
+          <DepartmentDD
+            id="department"
+            value={formData.department}
+            onChange={(val) => handleChange({ target: { id: "department", value: val?.target ? val.target.value : val } })}
           />
         )}
 

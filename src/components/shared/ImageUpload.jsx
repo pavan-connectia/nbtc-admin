@@ -33,7 +33,7 @@ const ImageUpload = ({
 
 
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("Image size must be below 10 MB");
+      toast.error("Image size must be below 25 MB");
       e.target.value = "";
       return;
     }
