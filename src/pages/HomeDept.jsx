@@ -27,6 +27,8 @@ const HomeDept = () => {
   const [id, setId] = useState("");
   const [updateHome] = useUpdateHomeDeptMutation();
   const [upload] = usePostUploadMutation();
+  const [isUploading, setIsUploading] = useState(false);
+  const MAX_FILE_SIZE = 60 * 1024 * 1024;
 
   const initialFormState = {
     heroType: "",
@@ -123,24 +125,33 @@ const HomeDept = () => {
   const handleVideoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-  
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File size should be less than 60MB");
+      return;
+    }
+
     const uploadData = new FormData();
-    uploadData.append("image", file); 
-  
+    uploadData.append("image", file);
+
     try {
+      setIsUploading(true);
 
       const response = await upload({
-        image: uploadData,          
-        folder: "/uploads/videos", 
-        title: "hero-video"  
+        image: uploadData,
+        folder: "/uploads/videos",
+        title: "hero-video",
       }).unwrap();
-  
+
       const path = response.filePath || response.data?.filePath;
+
       setFormData((prev) => ({ ...prev, video: path }));
       toast.success("Video uploaded");
     } catch (error) {
       console.error(error);
       toast.error("Video upload failed");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -306,13 +317,28 @@ const HomeDept = () => {
             />
           ) : (
             <>
-                            <div className="space-y-2 border p-3 rounded bg-white">
-                              <Label>Hero Video</Label>
-                              {formData.video && (
-                                <video src={`${import.meta.env.VITE_API_BASE_URL}${formData.video}`} controls className="w-full max-h-40 rounded mb-2" />
-                              )}
-                              <Input type="file" accept="video/*" onChange={handleVideoUpload} />
-                            </div>
+              <div className="space-y-2 border p-3 rounded bg-white">
+                <Label>Hero Video</Label>
+
+                {formData.video && (
+                  <video
+                    src={`${import.meta.env.VITE_API_BASE_URL}${formData.video}`}
+                    controls
+                    className="w-full max-h-40 rounded mb-2"
+                  />
+                )}
+
+                <Input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoUpload}
+                  disabled={isUploading}
+                />
+
+                {isUploading && (
+                  <p className="text-sm text-blue-500">Uploading...</p>
+                )}
+              </div>
             </>
           )}
 
